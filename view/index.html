@@ -160,7 +160,7 @@
     const balance = $("#balanceEdit").val();
     try {
       const { data } = await axios.put(
-        `http://localhost:3000/usuario?id=${id}`,
+        `https://cb-bancosolar.herokuapp.com/usuario?id=${id}`,
         {
           nombre: name,
           balance,
@@ -179,7 +179,7 @@
     let balance = Number($("form:first input:nth-child(2)").val());
     console.log(nombre, balance);
     try {
-      const response = await fetch("http://localhost:3000/usuario", {
+      const response = await fetch("https://cb-bancosolar.herokuapp.com/usuario", {
         method: "post",
         headers: {
           'Content-type': 'application/json'
@@ -212,7 +212,7 @@
       } else if (isNaN(monto)) {
         alert('El monto ingresado debe ser un numero!')
       } else {
-        const response = await fetch("http://localhost:3000/transferencia", {
+        const response = await fetch("https://cb-bancosolar.herokuapp.com/transferencia", {
           method: "post",
           headers: {
             'Content-type': 'application/json'
@@ -238,7 +238,7 @@
   });
   //Get usuarios
   const getUsuarios = async () => {
-    const response = await fetch("http://localhost:3000/usuarios");
+    const response = await fetch("https://cb-bancosolar.herokuapp.com/usuarios");
     let data = await response.json();
     if (data.length > 0) $(".usuarios").empty();
 
@@ -267,7 +267,7 @@
 
   //Eliminar usuario
   const eliminarUsuario = async (id) => {
-    const response = await fetch(`http://localhost:3000/usuario?id=${id}`, {
+    const response = await fetch(`https://cb-bancosolar.herokuapp.com/usuario?id=${id}`, {
       method: "DELETE",
     });
     await getUsuarios();
@@ -277,7 +277,7 @@
 
   //traemos transferencias
   const getTransferencias = async () => {
-    const { data } = await axios.get("http://localhost:3000/transferencias");
+    const { data } = await axios.get("https://cb-bancosolar.herokuapp.com/transferencias");
     if (data.length > 0) $(".transferencias").empty();
     data.forEach((t) => {
       $(".transferencias").append(`
