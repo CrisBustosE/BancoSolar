@@ -12,7 +12,7 @@ const { guardarTransferencia, getTransferencias } = require('./sql/transferencia
 
 
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname + "/view/index.html");
 });
 
 app.post("/usuario", async (req, res) => {
