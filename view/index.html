@@ -160,7 +160,7 @@
     const balance = $("#balanceEdit").val();
     try {
       const { data } = await axios.put(
-        `https://cb-bancosolar.herokuapp.com/usuario?id=${id}`,
+        `http://localhost:3000/usuario?id=${id}`,
         {
           nombre: name,
           balance,
@@ -177,23 +177,28 @@
     e.preventDefault();
     let nombre = $("form:first input:first").val();
     let balance = Number($("form:first input:nth-child(2)").val());
-    console.log(nombre, balance);
-    try {
-      const response = await fetch("https://cb-bancosolar.herokuapp.com/usuario", {
-        method: "post",
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          nombre,
-          balance,
-        }),
-      });
-      $("form:first input:first").val("");
-      $("form:first input:nth-child(2)").val("");
-      location.reload();
-    } catch (e) {
-      alert("Algo salió mal ..." + e);
+    if (balance < 0) {
+      alert('Balance debe ser mayor o igual a 0');
+    } else if (isNaN(balance)) {
+      alert('Balance debe ser númerico.');
+    } else {
+      try {
+        const response = await fetch("http://localhost:3000/usuario", {
+          method: "post",
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            nombre,
+            balance,
+          }),
+        });
+        $("form:first input:first").val("");
+        $("form:first input:nth-child(2)").val("");
+        location.reload();
+      } catch (e) {
+        alert("Algo salió mal ..." + e);
+      }
     }
   });
   //Agregar Transferencia
@@ -210,9 +215,11 @@
       if (emisor == receptor) {
         alert('No puedes transferir desde tu cuenta a tu misma cuenta!');
       } else if (isNaN(monto)) {
-        alert('El monto ingresado debe ser un numero!')
+        alert('El monto ingresado debe ser un numero!');
+      } else if (monto <= 0) {
+        alert('El monto ingresado debe ser mayor a 0!');
       } else {
-        const response = await fetch("https://cb-bancosolar.herokuapp.com/transferencia", {
+        const response = await fetch("http://localhost:3000/transferencia", {
           method: "post",
           headers: {
             'Content-type': 'application/json'
@@ -225,7 +232,11 @@
         });
         const data = await response.json();
         if (data.severity == 'ERROR') {
-          alert('Hubo un error al procesar su solicitud, porfavor verifique los datos antes de continuar.');
+          if (data.code == 23514) {
+            alert(`El monto ingresado supera el balance total del emisor: ${data.detail} verifica los datos nuevamente.`);
+          } else {
+            alert('Hubo un error al procesar su solicitud, porfavor verifique los datos antes de continuar.');
+          }
           location.reload();
         } else {
           location.reload();
@@ -238,7 +249,7 @@
   });
   //Get usuarios
   const getUsuarios = async () => {
-    const response = await fetch("https://cb-bancosolar.herokuapp.com/usuarios");
+    const response = await fetch("http://localhost:3000/usuarios");
     let data = await response.json();
     if (data.length > 0) $(".usuarios").empty();
 
@@ -267,7 +278,7 @@
 
   //Eliminar usuario
   const eliminarUsuario = async (id) => {
-    const response = await fetch(`https://cb-bancosolar.herokuapp.com/usuario?id=${id}`, {
+    const response = await fetch(`http://localhost:3000/usuario?id=${id}`, {
       method: "DELETE",
     });
     await getUsuarios();
@@ -277,7 +288,7 @@
 
   //traemos transferencias
   const getTransferencias = async () => {
-    const { data } = await axios.get("https://cb-bancosolar.herokuapp.com/transferencias");
+    const { data } = await axios.get("http://localhost:3000/transferencias");
     if (data.length > 0) $(".transferencias").empty();
     data.forEach((t) => {
       $(".transferencias").append(`

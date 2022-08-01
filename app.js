@@ -59,9 +59,9 @@ app.delete("/usuario", async (req, res) => {
     try {
         const id = req.query.id;
         const result = await borrarUsuario(id);
-        if (result.rowCount == 0){
+        if (result.rowCount == 0) {
             res.status(400).send('El usuario solicitado no existe.');
-        }else{
+        } else {
             res.send('Usuario eliminado con éxito.');
         }
     } catch (error) {
@@ -77,10 +77,16 @@ app.post("/transferencia", async (req, res) => {
         } else {
             const result = await guardarTransferencia(transferencia);
             if (result.severity == 'ERROR') {
-                res.status(400).send(result.detail);
-            } else if (result.error_datos == 'ERROR'){
+                let text = result.detail;
+                const monto = text.split(" ");
+                res.status(400).send({
+                    severity: result.severity,
+                    code: result.code,
+                    detail: monto[7],
+                });
+            } else if (result.error_datos == 'ERROR') {
                 res.status(400).send('Error, el monto o el usuario ingresado no es valido.');
-            }else{
+            } else {
                 res.status(201).json(result);
             }
         }
