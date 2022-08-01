@@ -28,14 +28,14 @@ const guardarTransferencia = async (datos) => {
 
             //Verificamos si se updateo o no, debido al estado / balance del cliente y verificamos con rowcount para ver las rows afectadas,
             //de no estar afectadas, pueede ser que el usuario no tenga el saldo suficiente o el usuario este deshabilitado
-            if (checkDescontar.rowCount == 1 && checkAcreditar.rowCount == 1){
+            if (checkDescontar.rowCount == 1 && checkAcreditar.rowCount == 1) {
                 const result = await client.query(transferencia);
                 await client.query('COMMIT');
                 respuesta = result;
                 return respuesta;
-            }else{
+            } else {
                 await client.query('ROLLBACK');
-                return  {error_datos: 'ERROR'}
+                return { error_datos: 'ERROR' }
             }
         } catch (error) {
             await client.query('ROLLBACK');
@@ -53,7 +53,7 @@ const getTransferencias = async () => {
     const { rows } = await pool.query("SELECT * FROM transferencias;");
     try {
         for (const element of rows) {
-                emisor = {
+            emisor = {
                 text: "SELECT u.nombre FROM usuarios u JOIN transferencias t ON u.id = t.emisor WHERE t.emisor = $1;",
                 values: [element.emisor],
             }
@@ -74,4 +74,13 @@ const getTransferencias = async () => {
     return rows;
 }
 
-module.exports = { guardarTransferencia, getTransferencias }
+const deleteTransferencias = async () => {
+    try {
+        const response = pool.query('DELETE FROM transferencias;');
+        return response;
+    } catch (error) {
+        console.log('Error al eliminar transferencias:', error);
+    }
+}
+
+module.exports = { guardarTransferencia, getTransferencias, deleteTransferencias }

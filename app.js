@@ -7,7 +7,7 @@ app.use(express.json());
 
 
 const { guardarUsuario, getUsuarios, editarUsuario, borrarUsuario } = require('./sql/usuarios');
-const { guardarTransferencia, getTransferencias } = require('./sql/transferencias');
+const { guardarTransferencia, getTransferencias, deleteTransferencias } = require('./sql/transferencias');
 
 
 
@@ -100,6 +100,15 @@ app.get("/transferencias", async (req, res) => {
     try {
         const transferencias = await getTransferencias();
         res.json(transferencias);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
+app.delete("/transferencias", async (req, res) => {
+    try {
+        const result = await deleteTransferencias();
+        res.status(200).send(result);
     } catch (error) {
         res.status(500).send(error);
     }

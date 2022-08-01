@@ -94,6 +94,7 @@
             </tr>
           </tbody>
         </table>
+        <button type="button" class="btn btn-danger" id="delTransfer">Borrar Transferencias</button>
       </div>
     </div>
   </div>
@@ -145,6 +146,10 @@
     padding: 15px;
     background: #f8f9fa;
     border-radius: 10px;
+  }
+  #delTransfer{
+    display: flex;
+    justify-content: start;
   }
 </style>
 
@@ -301,6 +306,15 @@
      `);
     });
   };
+  
+  //Eliminar transferencias
+  $("#delTransfer").on('click', async function(){
+    const response = await fetch('http://localhost:3000/transferencias',{
+      method: "DELETE",
+    });
+    alert('Transferencias eliminadas con éxito');
+    location.reload();
+  });
 
   getUsuarios();
   getTransferencias();
